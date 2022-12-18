@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
@@ -37,7 +36,6 @@ public class MyMainFrame extends JFrame{
     private JMenuItem showAxisMenuItem;
     private JMenuItem showDotsMenuItem;
     private JMenuItem showIntegralsMenuItem;
-    private JMenuItem showRotateMenuItem;
     private JMenuItem resetGraphicsMenuItem;
     private JMenuItem saveToGraphicsMenuItem;
 
@@ -52,7 +50,6 @@ public class MyMainFrame extends JFrame{
         Toolkit kit = Toolkit.getDefaultToolkit();
         setSize(WIDTH, HEIGHT);
         setLocation((kit.getScreenSize().width - WIDTH)/2, (kit.getScreenSize().height - HEIGHT)/2);
-        // setExtendedState(MAXIMIZED_BOTH);
     //@ Реализация основного функционала программы
         //^ Меню
         JMenuBar menuBar = new JMenuBar();
@@ -114,27 +111,6 @@ public class MyMainFrame extends JFrame{
 
         showIntegralsMenuItem.setSelected(false);
         graphicsMenu.addMenuListener(new GraphicsMenuListener());
-
-        Action showRotateAction = new AbstractAction("Поворот"){
-            public void actionPerformed(ActionEvent event){
-                graphicsDisplay.setShowRotate(showRotateMenuItem.isSelected());
-            }
-        };
-
-        // showRotateMenuItem = new JCheckBoxMenuItem(showRotateAction);
-        // graphicsMenu.add(showRotateMenuItem);
-
-        // showRotateMenuItem.setSelected(false);
-        // graphicsMenu.addMenuListener(new GraphicsMenuListener());
-
-        // Action openGraphicsAction = new AbstractAction("Открыть файл с графиком"){
-        //     public void actionPerformed(ActionEvent event){
-        //         if(MyMainFrame.this.fileChooser == null){
-
-        //         }
-        //     }
-        // }
-
         Action resetGraphicsAction = new AbstractAction("Отменить все изменения") {
             public void actionPerformed(ActionEvent event){
                 MyMainFrame.this.graphicsDisplay.reset();
@@ -168,7 +144,6 @@ public class MyMainFrame extends JFrame{
             showAxisMenuItem.setEnabled(fileLoaded);
             showDotsMenuItem.setEnabled(fileLoaded);
             showIntegralsMenuItem.setEnabled(fileLoaded);
-            showRotateMenuItem.setEnabled(fileLoaded);
             resetGraphicsMenuItem.setEnabled(fileLoaded);
             saveToGraphicsMenuItem.setEnabled(fileLoaded);
         }
@@ -181,8 +156,6 @@ public class MyMainFrame extends JFrame{
     protected void saveToGraphicsFile(File selectedFile){
         try(DataOutputStream out = new DataOutputStream(new FileOutputStream(selectedFile))){
             for(int i = 0; i < graphicsDisplay.getData().size(); i++){
-                // out.writeDouble((Double)data.getValueAt(i,0));
-                // out.writeDouble((Double)data.getValueAt(i,2));
                 out.writeDouble((Double)graphicsDisplay.getData().get(i)[0]);
                 out.writeDouble((Double)graphicsDisplay.getData().get(i)[1]);
             }
@@ -193,13 +166,9 @@ public class MyMainFrame extends JFrame{
         try{
             DataInputStream in = new DataInputStream(new FileInputStream(selectedFile));
 
-            // Double[][] graphicsData = new Double[in.available()/(Double.SIZE/8)/2][];
-
             ArrayList<Double[]> graphicsData = new ArrayList<>();
 
-            int i = 0; 
             while(in.available() > 0){
-                // Double[] cell = new Double[2];
                 Double x = in.readDouble();
                 Double y = in.readDouble();
                 graphicsData.add( new Double[]{x, y});
